@@ -10,8 +10,8 @@ namespace Gilzoide.RoundedCorners
         [Tooltip("Corner radius, in Canvas units.")]
         [SerializeField, Min(0)] protected float _radius = 32;
 
-        [Tooltip("Number of intermediary points in a corner. In particular, setting this to 0 makes corners flat, as in an octogon.")]
-        [SerializeField, Min(0)] protected int _resolution = 8;
+        [Tooltip("Number of triangles generated per rounded corner. In particular, setting this to 1 makes corners flat, as in an octogon.")]
+        [SerializeField, Min(1)] protected int _cornerTriangles = 8;
 
         [Space]
         [Tooltip("Whether the bottom left corner should be rounded.")]
@@ -41,17 +41,17 @@ namespace Gilzoide.RoundedCorners
             }
         }
 
-        /// <summary>Number of intermediary points in a corner.</summary>
-        /// <remarks>In particular, setting this to 0 makes corners flat, as in an octogon.</remarks>
-        public int Resolution
+        /// <summary>Number of triangles generated per rounded corner.</summary>
+        /// <remarks>In particular, setting this to 1 makes corners flat, as in an octogon.</remarks>
+        public int CornerTriangles
         {
-            get => _resolution;
+            get => _cornerTriangles;
             set
             {
-                value = Mathf.Max(0, value);
-                if (_resolution != value)
+                value = Mathf.Max(1, value);
+                if (_cornerTriangles != value)
                 {
-                    _resolution = value;
+                    _cornerTriangles = value;
                     SetVerticesDirty();
                 }
             }
@@ -114,7 +114,7 @@ namespace Gilzoide.RoundedCorners
                 Rect centerRect = fullRect.Inset(radius);
                 if (_bottomLeft)
                 {
-                    PopulateCorner(vh, fullRect, centerRect.GetBottomLeft(), radius, -90, -180, _resolution);
+                    PopulateCorner(vh, fullRect, centerRect.GetBottomLeft(), radius, -90, -180);
                 }
                 else
                 {
@@ -123,7 +123,7 @@ namespace Gilzoide.RoundedCorners
 
                 if (_topLeft)
                 {
-                    PopulateCorner(vh, fullRect, centerRect.GetTopLeft(), radius, 180, 90, _resolution);
+                    PopulateCorner(vh, fullRect, centerRect.GetTopLeft(), radius, 180, 90);
                 }
                 else
                 {
@@ -132,7 +132,7 @@ namespace Gilzoide.RoundedCorners
 
                 if (_topRight)
                 {
-                    PopulateCorner(vh, fullRect, centerRect.GetTopRight(), radius, 90, 0, _resolution);
+                    PopulateCorner(vh, fullRect, centerRect.GetTopRight(), radius, 90, 0);
                 }
                 else
                 {
@@ -141,7 +141,7 @@ namespace Gilzoide.RoundedCorners
 
                 if (_bottomRight)
                 {
-                    PopulateCorner(vh, fullRect, centerRect.GetBottomRight(), radius, 0, -90, _resolution);
+                    PopulateCorner(vh, fullRect, centerRect.GetBottomRight(), radius, 0, -90);
                 }
                 else
                 {
@@ -187,7 +187,7 @@ namespace Gilzoide.RoundedCorners
             vh.AddTriangle(vertexCount + 2, vertexCount + 3, vertexCount);
         }
 
-        protected void PopulateCorner(VertexHelper vh, Rect fullRect, Vector2 point, float radius, float startAngle, float endAngle, int resolution)
+        protected void PopulateCorner(VertexHelper vh, Rect fullRect, Vector2 point, float radius, float startAngle, float endAngle)
         {
             Vector2 direction = new Vector2(radius, 0);
             int vertexCount = vh.currentVertCount;
@@ -195,14 +195,12 @@ namespace Gilzoide.RoundedCorners
             PopulatePoint(vh, fullRect, point);
             PopulatePoint(vh, fullRect, point + direction.Rotated(startAngle));
 
-            int count = Mathf.Min(Mathf.FloorToInt(radius), resolution);
+            int count = Mathf.Min(Mathf.FloorToInt(radius), _cornerTriangles);
             for (int i = 0; i < count; i++)
             {
-                PopulatePoint(vh, fullRect, point + direction.Rotated(Mathf.Lerp(startAngle, endAngle, (float) (i + 1) / (float) (count + 1))));
+                PopulatePoint(vh, fullRect, point + direction.Rotated(Mathf.Lerp(startAngle, endAngle, (float) (i + 1) / (float) count)));
                 vh.AddTriangle(vertexCount, vertexCount + i + 1, vertexCount + i + 2);
             }
-            PopulatePoint(vh, fullRect, point + direction.Rotated(endAngle));
-            vh.AddTriangle(vertexCount, vertexCount + count + 1, vertexCount + count + 2);
         }
 
         #endregion
