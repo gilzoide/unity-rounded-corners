@@ -1,0 +1,11 @@
+{
+  "name": "com.gilzoide.rounded-corners",
+  "displayName": "Rounded Corners",
+  "version": "1.0.0",
+  "description": "UI components with rounded corner meshes.",
+  "homepage": "https://github.com/gilzoide/unity-rounded-corners",
+  "license": "Unlicense",
+  "author": {
+    "name": "Gil Barbosa Reis"
+  }
+}
