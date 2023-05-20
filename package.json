@@ -2,7 +2,7 @@
   "name": "com.gilzoide.rounded-corners",
   "displayName": "Rounded Corners",
   "version": "1.0.0",
-  "description": "UI components with rounded corner meshes.",
+  "description": "UI components with rounded corners embedded in their meshes.",
   "homepage": "https://github.com/gilzoide/unity-rounded-corners",
   "license": "Unlicense",
   "author": {
