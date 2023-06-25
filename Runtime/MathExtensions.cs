@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Gilzoide.RoundedCorners
@@ -38,6 +40,18 @@ namespace Gilzoide.RoundedCorners
             return new Vector2(rect.xMax, rect.yMin);
         }
 
+        public static Vector2 GetCornerPoint(this Rect rect, RectCorner corner)
+        {
+            switch (corner)
+            {
+                case RectCorner.BottomLeft: return rect.GetBottomLeft();
+                case RectCorner.TopLeft: return rect.GetTopLeft();
+                case RectCorner.TopRight: return rect.GetTopRight();
+                case RectCorner.BottomRight: return rect.GetBottomRight();
+                default: throw new ArgumentOutOfRangeException(nameof(corner));
+            }
+        }
+
         public static Rect Inset(this Rect rect, float value)
         {
             return Rect.MinMaxRect(rect.xMin + value, rect.yMin + value, rect.xMax - value, rect.yMax - value);
@@ -46,6 +60,27 @@ namespace Gilzoide.RoundedCorners
         public static bool HasArea(this Rect rect)
         {
             return rect.width > 0 && rect.height > 0;
+        }
+
+        public static IEnumerable<Vector2> EnumerateCornerPoints(this Rect rect, RectCorner corner, RoundedCorner roundParameters, float maxRadius)
+        {
+            float radius = Mathf.Min(maxRadius, roundParameters.Radius);
+            if (radius <= 0)
+            {
+                yield return rect.GetCornerPoint(corner);
+                yield break;
+            }
+
+            Vector2 pivotPoint = rect.Inset(radius).GetCornerPoint(corner);
+            Vector2 direction = new Vector2(radius, 0);
+            (float startAngle, float endAngle) = corner.GetAngleRangeFromCenter();
+            yield return pivotPoint + direction.Rotated(startAngle);
+            
+            int count = Mathf.Min(Mathf.FloorToInt(radius), roundParameters.TriangleCount);
+            for (int i = 0; i < count; i++)
+            {
+                yield return pivotPoint + direction.Rotated(Mathf.Lerp(startAngle, endAngle, (float) (i + 1) / (float) count));
+            }
         }
 
         #endregion
