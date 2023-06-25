@@ -1,10 +1,9 @@
 # Rounded Corners
-Unity UI components with rounded corners embedded in their meshes.
+Unity UI `MaskableGraphic` components with rounded corners embedded in their meshes.
 
 
 ## Features
-- General configurations for radius and number of triangles generated in each corner.
-- Enable or disable corners independently.
+- Independent configurations for radius and number of triangles generated per corner.
 - Supports custom materials and masking.
   Rounded corners are embedded in the generated meshes, so the components don't mess with your materials at all.
 - Supports mesh modifiers, like Outline and Shadow.
