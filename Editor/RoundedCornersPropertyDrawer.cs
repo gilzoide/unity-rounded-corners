@@ -11,6 +11,7 @@ namespace Gilzoide.RoundedCorners.Editor
             new GUIContent("Radius"),
             new GUIContent("Triangles"),
         };
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             SerializedProperty firstProperty = property.Copy();

@@ -2,10 +2,17 @@
   "name": "com.gilzoide.rounded-corners",
   "displayName": "Rounded Corners",
   "version": "1.0.0",
-  "description": "UI MaskableGraphic components with rounded corners embedded in their meshes.",
+  "description": "UI MaskableGraphic components with rounded corners embedded in their meshes.\n\nUse RoundedRect for solid graphics, RoundedTexture for rounded textures and RoundedImage for rounded sprites.",
   "homepage": "https://github.com/gilzoide/unity-rounded-corners",
   "license": "Unlicense",
   "author": {
     "name": "Gil Barbosa Reis"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "Rounded Graphics",
+      "description": "Simple sample showing Rounded Corners features",
+      "path": "Samples~/RoundedGraphics"
+    }
+  ]
 }
