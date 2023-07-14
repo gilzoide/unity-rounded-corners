@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3107262193521016336, guid: f9b31da5d9f3f4d998b45439c2e3ac33, type: 3}
+      propertyPath: _bottomRight.TriangleCount
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3107262193521016338, guid: f9b31da5d9f3f4d998b45439c2e3ac33, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
