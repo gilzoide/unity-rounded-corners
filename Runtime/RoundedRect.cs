@@ -4,13 +4,16 @@ using UnityEngine.UI;
 namespace Gilzoide.RoundedCorners
 {
     [RequireComponent(typeof(CanvasRenderer))]
-    public class RoundedRect : MaskableGraphic
+    public class RoundedRect : MaskableGraphic, IVertexColorProvider, IVertexUvProvider
     {
         [Header("Corner Radius")]
         [SerializeField] protected RoundedCorner _bottomLeft = new RoundedCorner { Radius = 32, TriangleCount = 8 };
         [SerializeField] protected RoundedCorner _topLeft = new RoundedCorner { Radius = 32, TriangleCount = 8 };
         [SerializeField] protected RoundedCorner _topRight = new RoundedCorner { Radius = 32, TriangleCount = 8 };
         [SerializeField] protected RoundedCorner _bottomRight = new RoundedCorner { Radius = 32, TriangleCount = 8 };
+        
+        [Tooltip("Whether to render the inside or outside of the rounded rectangle.")]
+        [SerializeField] protected MeshType _meshType = MeshType.Inside;
 
         /// <summary>Radius of the bottom left corner.</summary>
         public RoundedCorner BottomLeft
@@ -56,6 +59,17 @@ namespace Gilzoide.RoundedCorners
             }
         }
 
+        /// <summary>Whether to render the inside or outside of the rounded rectangle.</summary>
+        public MeshType MeshType
+        {
+            get => _meshType;
+            set
+            {
+                _meshType = value;
+                SetVerticesDirty();
+            }
+        }
+
         #region Mesh generation
 
         protected override void OnPopulateMesh(VertexHelper vh)
@@ -68,38 +82,7 @@ namespace Gilzoide.RoundedCorners
                 return;
             }
 
-            PopulatePoint(vh, rect, rect.center);
-            int vertexCount = 1;
-
-            float maxRadius = Mathf.Min(rect.width, rect.height) * 0.5f;
-            foreach(Vector2 v in rect.EnumerateCornerPoints(RectCorner.BottomLeft, BottomLeft, maxRadius))
-            {
-                PopulatePoint(vh, rect, v);
-                vertexCount++;
-                if (vertexCount >= 3)
-                {
-                    vh.AddTriangle(0, vertexCount - 2, vertexCount - 1);
-                }
-            }
-            foreach(Vector2 v in rect.EnumerateCornerPoints(RectCorner.TopLeft, TopLeft, maxRadius))
-            {
-                PopulatePoint(vh, rect, v);
-                vertexCount++;
-                vh.AddTriangle(0, vertexCount - 2, vertexCount - 1);
-            }
-            foreach(Vector2 v in rect.EnumerateCornerPoints(RectCorner.TopRight, TopRight, maxRadius))
-            {
-                PopulatePoint(vh, rect, v);
-                vertexCount++;
-                vh.AddTriangle(0, vertexCount - 2, vertexCount - 1);
-            }
-            foreach(Vector2 v in rect.EnumerateCornerPoints(RectCorner.BottomRight, BottomRight, maxRadius))
-            {
-                PopulatePoint(vh, rect, v);
-                vertexCount++;
-                vh.AddTriangle(0, vertexCount - 2, vertexCount - 1);
-            }
-            vh.AddTriangle(0, vertexCount - 1, 1);
+            vh.AddRoundedRect(_meshType, rect, BottomLeft, TopLeft, TopRight, BottomRight, this, this);  
         }
 
         protected void PopulatePoint(VertexHelper vh, Rect fullRect, Vector2 point)
@@ -111,6 +94,24 @@ namespace Gilzoide.RoundedCorners
         protected virtual Vector2 GetUVForNormalizedPosition(Vector2 position)
         {
             return position;
+        }
+
+        #endregion
+
+        #region IVertexColorProvider
+
+        public Color GetVertexColor(Vector2 normalizedRectPosition)
+        {
+            return color;
+        }
+
+        #endregion
+
+        #region IVertexUvProvider
+
+        public Vector2 GetVertexUv(Vector2 normalizedRectPosition)
+        {
+            return GetUVForNormalizedPosition(normalizedRectPosition);
         }
 
         #endregion
